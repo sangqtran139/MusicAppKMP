@@ -1,3 +1,20 @@
+# MusicAppKMP
+
+A **music streaming** app built with **Kotlin Multiplatform + Compose Multiplatform**, targeting
+Android and iOS with shared UI and logic.
+
+> **📐 Architecture & contribution guide → [`docs/`](docs/README.md).**
+> Start there before writing code. AI agents: read [`CLAUDE.md`](CLAUDE.md) first.
+> The architecture is Clean Architecture + MVI over feature/core modules (Koin, Ktor, SQLDelight,
+> Coil, Media3/AVPlayer). The repo is currently the KMP wizard scaffold; the bootstrap order to
+> reach the documented foundation is in [`docs/Setup/BuildGuide.md`](docs/Setup/BuildGuide.md) (Phase 0).
+>
+> **Backend:** catalog data comes from **Deezer** via the **RapidAPI** proxy `deezerdevs-deezer`
+> (full API contract → [`docs/Api/DeezerApi.md`](docs/Api/DeezerApi.md)). It needs a RapidAPI key —
+> put it in `local.properties` (git-ignored) as `RAPIDAPI_KEY=...`; never hardcode or commit it.
+
+---
+
 This is a Kotlin Multiplatform project targeting Android, iOS.
 
 * [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
