@@ -92,6 +92,7 @@ kotlin {
             implementation(libs.sqldelight.driver.native)
         }
         commonMain.dependencies {
+            implementation(projects.core.common)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
