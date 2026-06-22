@@ -11,7 +11,8 @@ import kotlinx.coroutines.coroutineScope
  * Tải các playlist tuyển chọn (ID cố định) để hiển thị ở Home — proxy không có /chart,/editorial
  * nên dùng playlist ID seed (xem docs/Api/DeezerApi.md §9). Chạy song song; bỏ qua ID lỗi.
  *
- * ⚠️ [SEED_IDS] là placeholder cần team curate bằng playlist ID Deezer công khai còn sống.
+ * [SEED_IDS] là các playlist công khai của Deezer (curate thủ công). Nếu Deezer đổi/ẩn một
+ * playlist thì card đó tự ẩn (graceful skip) — cập nhật danh sách khi cần.
  */
 class GetFeaturedPlaylistsUseCase(private val repository: CatalogRepository) {
 
@@ -27,12 +28,12 @@ class GetFeaturedPlaylistsUseCase(private val repository: CatalogRepository) {
     }
 
     private companion object {
+        // Playlist công khai Deezer (gọi /playlist/{id} qua proxy được — chỉ /chart bị chặn).
         val SEED_IDS = listOf(
-            908622995L,
-            1313621735L,
-            1652248171L,
-            1282495565L,
-            3155776842L,
+            3155776842L, // Top Worldwide
+            1313621735L, // Top USA
+            1363560485L, // Deezer Hits
+            908622995L,  // playlist ví dụ trong docs Deezer API
         )
     }
 }
