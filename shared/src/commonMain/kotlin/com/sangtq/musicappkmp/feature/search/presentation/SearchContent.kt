@@ -39,6 +39,7 @@ fun SearchContent(
     state: SearchUiState,
     onIntent: (SearchIntent) -> Unit,
     onOpenAlbum: (Long) -> Unit,
+    onOpenArtist: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
@@ -84,6 +85,7 @@ fun SearchContent(
                             track = track,
                             onClick = { onIntent(SearchIntent.TrackClicked(track)) },
                             onCoverClick = track.albumId?.let { id -> { onOpenAlbum(id) } },
+                            onArtistClick = track.artistId?.let { id -> { onOpenArtist(id) } },
                         )
                     }
                     if (state.isLoadingMore) {
@@ -100,7 +102,12 @@ fun SearchContent(
 }
 
 @Composable
-private fun TrackRow(track: Track, onClick: () -> Unit, onCoverClick: (() -> Unit)? = null) {
+private fun TrackRow(
+    track: Track,
+    onClick: () -> Unit,
+    onCoverClick: (() -> Unit)? = null,
+    onArtistClick: (() -> Unit)? = null,
+) {
     Row(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = AppSpacing.sm),
         verticalAlignment = Alignment.CenterVertically,
@@ -127,6 +134,7 @@ private fun TrackRow(track: Track, onClick: () -> Unit, onCoverClick: (() -> Uni
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = if (onArtistClick != null) Modifier.clickable(onClick = onArtistClick) else Modifier,
             )
         }
     }

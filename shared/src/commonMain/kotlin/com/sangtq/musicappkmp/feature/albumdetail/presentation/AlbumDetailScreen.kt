@@ -14,6 +14,7 @@ fun AlbumDetailScreen(
     albumId: Long,
     onBack: () -> Unit,
     onTrackSelected: (Track) -> Unit,
+    onOpenArtist: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AlbumDetailViewModel = koinViewModel { parametersOf(albumId) },
 ) {
@@ -27,5 +28,11 @@ fun AlbumDetailScreen(
         }
     }
 
-    AlbumDetailContent(state = state, onIntent = viewModel::onIntent, onBack = onBack, modifier = modifier)
+    AlbumDetailContent(
+        state = state,
+        onIntent = viewModel::onIntent,
+        onBack = onBack,
+        onOpenArtist = onOpenArtist,
+        modifier = modifier,
+    )
 }

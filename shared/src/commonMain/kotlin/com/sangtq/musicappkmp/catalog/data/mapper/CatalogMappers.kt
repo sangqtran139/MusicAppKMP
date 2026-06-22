@@ -15,6 +15,7 @@ fun TrackDto.toDomain(albumCover: String? = null): Track = Track(
     id = id,
     title = title,
     artistName = artist?.name.orEmpty(),
+    artistId = artist?.id,
     albumTitle = album?.title,
     albumId = album?.id,
     coverUrl = albumCover ?: album?.coverBig ?: album?.coverMedium,

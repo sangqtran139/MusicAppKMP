@@ -17,3 +17,9 @@ data object LibraryRoute
 
 @Serializable
 data class AlbumRoute(val albumId: Long)
+
+@Serializable
+data class ArtistRoute(val artistId: Long)
+
+@Serializable
+data class PlaylistRoute(val playlistId: Long)

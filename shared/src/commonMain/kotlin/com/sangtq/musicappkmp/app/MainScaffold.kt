@@ -26,7 +26,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.sangtq.musicappkmp.catalog.domain.model.Track
 import com.sangtq.musicappkmp.feature.albumdetail.presentation.AlbumDetailScreen
+import com.sangtq.musicappkmp.feature.artistdetail.presentation.ArtistDetailScreen
 import com.sangtq.musicappkmp.feature.home.presentation.HomeScreen
+import com.sangtq.musicappkmp.feature.playlistdetail.presentation.PlaylistDetailScreen
 import com.sangtq.musicappkmp.feature.library.domain.usecase.AddRecentUseCase
 import com.sangtq.musicappkmp.feature.library.presentation.LibraryScreen
 import com.sangtq.musicappkmp.feature.player.presentation.MiniPlayer
@@ -70,6 +72,8 @@ fun MainScaffold() {
     }
 
     fun openAlbum(albumId: Long) = navController.navigate(AlbumRoute(albumId))
+    fun openArtist(artistId: Long) = navController.navigate(ArtistRoute(artistId))
+    fun openPlaylist(playlistId: Long) = navController.navigate(PlaylistRoute(playlistId))
 
     Box(Modifier.fillMaxSize()) {
         Scaffold(
@@ -110,19 +114,46 @@ fun MainScaffold() {
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
             ) {
                 composable<HomeRoute> {
-                    HomeScreen(onTrackSelected = ::playSelected, onOpenAlbum = ::openAlbum)
+                    HomeScreen(
+                        onTrackSelected = ::playSelected,
+                        onOpenAlbum = ::openAlbum,
+                        onOpenPlaylist = ::openPlaylist,
+                    )
                 }
                 composable<ExploreRoute> {
-                    SearchScreen(onTrackSelected = ::playSelected, onOpenAlbum = ::openAlbum)
+                    SearchScreen(
+                        onTrackSelected = ::playSelected,
+                        onOpenAlbum = ::openAlbum,
+                        onOpenArtist = ::openArtist,
+                    )
                 }
                 composable<LibraryRoute> {
-                    LibraryScreen(onTrackSelected = ::playSelected, onOpenAlbum = ::openAlbum)
+                    LibraryScreen(
+                        onTrackSelected = ::playSelected,
+                        onOpenAlbum = ::openAlbum,
+                        onOpenArtist = ::openArtist,
+                    )
                 }
                 composable<AlbumRoute> { entry ->
                     AlbumDetailScreen(
                         albumId = entry.toRoute<AlbumRoute>().albumId,
                         onBack = { navController.popBackStack() },
                         onTrackSelected = ::playSelected,
+                        onOpenArtist = ::openArtist,
+                    )
+                }
+                composable<ArtistRoute> { entry ->
+                    ArtistDetailScreen(
+                        artistId = entry.toRoute<ArtistRoute>().artistId,
+                        onBack = { navController.popBackStack() },
+                    )
+                }
+                composable<PlaylistRoute> { entry ->
+                    PlaylistDetailScreen(
+                        playlistId = entry.toRoute<PlaylistRoute>().playlistId,
+                        onBack = { navController.popBackStack() },
+                        onTrackSelected = ::playSelected,
+                        onOpenArtist = ::openArtist,
                     )
                 }
             }

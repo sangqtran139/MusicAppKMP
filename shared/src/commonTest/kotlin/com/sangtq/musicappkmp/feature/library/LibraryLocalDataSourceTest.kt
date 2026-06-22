@@ -27,6 +27,7 @@ class LibraryLocalDataSourceTest {
         id = id,
         title = "Song $id",
         artistName = "Artist",
+        artistId = null,
         albumTitle = null,
         albumId = null,
         coverUrl = null,

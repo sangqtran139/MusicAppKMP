@@ -12,6 +12,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SearchScreen(
     onTrackSelected: (Track) -> Unit,
     onOpenAlbum: (Long) -> Unit,
+    onOpenArtist: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = koinViewModel(),
 ) {
@@ -25,5 +26,11 @@ fun SearchScreen(
         }
     }
 
-    SearchContent(state = state, onIntent = viewModel::onIntent, onOpenAlbum = onOpenAlbum, modifier = modifier)
+    SearchContent(
+        state = state,
+        onIntent = viewModel::onIntent,
+        onOpenAlbum = onOpenAlbum,
+        onOpenArtist = onOpenArtist,
+        modifier = modifier,
+    )
 }

@@ -29,6 +29,7 @@ class CatalogMappersTest {
         assertEquals(916424, track.id)
         assertEquals("Without Me", track.title)
         assertEquals("Eminem", track.artistName)
+        assertEquals(13L, track.artistId)
         assertEquals("The Eminem Show", track.albumTitle)
         assertEquals(1L, track.albumId)
         assertEquals("cover_big", track.coverUrl)

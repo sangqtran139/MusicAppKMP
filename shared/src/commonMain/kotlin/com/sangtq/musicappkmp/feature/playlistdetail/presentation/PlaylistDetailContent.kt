@@ -1,4 +1,4 @@
-package com.sangtq.musicappkmp.feature.albumdetail.presentation
+package com.sangtq.musicappkmp.feature.playlistdetail.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,15 +22,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.sangtq.musicappkmp.catalog.domain.model.Album
+import com.sangtq.musicappkmp.catalog.domain.model.Playlist
 import com.sangtq.musicappkmp.catalog.domain.model.Track
 import com.sangtq.musicappkmp.core.designsystem.component.AppAsyncImage
 import com.sangtq.musicappkmp.core.designsystem.theme.AppSpacing
 
 @Composable
-fun AlbumDetailContent(
-    state: AlbumDetailUiState,
-    onIntent: (AlbumDetailIntent) -> Unit,
+fun PlaylistDetailContent(
+    state: PlaylistDetailUiState,
+    onIntent: (PlaylistDetailIntent) -> Unit,
     onBack: () -> Unit,
     onOpenArtist: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -48,7 +48,7 @@ fun AlbumDetailContent(
                 modifier = Modifier.clickable(onClick = onBack),
             )
             Text(
-                state.album?.title ?: "Album",
+                state.playlist?.title ?: "Playlist",
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -62,16 +62,16 @@ fun AlbumDetailContent(
 
                 state.error != null -> ErrorState(
                     message = state.error,
-                    onRetry = { onIntent(AlbumDetailIntent.Retry) },
+                    onRetry = { onIntent(PlaylistDetailIntent.Retry) },
                     modifier = Modifier.align(Alignment.Center),
                 )
 
-                state.album != null -> LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    item { AlbumHeader(state.album) }
-                    items(state.album.tracks, key = { it.id }) { track ->
+                state.playlist != null -> LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    item { PlaylistHeader(state.playlist) }
+                    items(state.playlist.tracks, key = { it.id }) { track ->
                         TrackRow(
                             track = track,
-                            onClick = { onIntent(AlbumDetailIntent.TrackClicked(track)) },
+                            onClick = { onIntent(PlaylistDetailIntent.TrackClicked(track)) },
                             onArtistClick = track.artistId?.let { id -> { onOpenArtist(id) } },
                         )
                     }
@@ -82,33 +82,34 @@ fun AlbumDetailContent(
 }
 
 @Composable
-private fun AlbumHeader(album: Album) {
+private fun PlaylistHeader(playlist: Playlist) {
     Column(
         modifier = Modifier.fillMaxWidth().padding(AppSpacing.md),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
     ) {
         AppAsyncImage(
-            url = album.coverUrl,
-            contentDescription = album.title,
+            url = playlist.coverUrl,
+            contentDescription = playlist.title,
             modifier = Modifier.size(200.dp).clip(RoundedCornerShape(12.dp))
                 .background(MaterialTheme.colorScheme.surfaceVariant),
         )
         Text(
-            album.title,
+            playlist.title,
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground,
         )
+        playlist.description?.takeIf { it.isNotBlank() }?.let {
+            Text(
+                it,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
         Text(
-            album.artistName,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(
-            buildString {
-                append("${album.trackCount} songs")
-                album.releaseDate?.takeIf { it.isNotBlank() }?.let { append(" · $it") }
-            },
+            "${playlist.trackCount} songs",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

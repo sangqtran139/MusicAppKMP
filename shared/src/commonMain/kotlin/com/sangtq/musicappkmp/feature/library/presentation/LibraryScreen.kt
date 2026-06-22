@@ -12,6 +12,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun LibraryScreen(
     onTrackSelected: (Track) -> Unit,
     onOpenAlbum: (Long) -> Unit,
+    onOpenArtist: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryViewModel = koinViewModel(),
 ) {
@@ -25,5 +26,11 @@ fun LibraryScreen(
         }
     }
 
-    LibraryContent(state = state, onIntent = viewModel::onIntent, onOpenAlbum = onOpenAlbum, modifier = modifier)
+    LibraryContent(
+        state = state,
+        onIntent = viewModel::onIntent,
+        onOpenAlbum = onOpenAlbum,
+        onOpenArtist = onOpenArtist,
+        modifier = modifier,
+    )
 }
