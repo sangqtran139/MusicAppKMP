@@ -13,8 +13,8 @@ import kotlinx.coroutines.flow.Flow
 interface CatalogRepository {
     suspend fun search(query: String, index: Int, limit: Int = 25): AppResult<SearchPage>
     suspend fun getTrack(id: Long): AppResult<Track>
-    /** Album offline-first: quan sát cache (SQLDelight) + refresh network (xem networkBoundResource). */
+    /** Detail offline-first: quan sát cache (SQLDelight) + refresh network (xem networkBoundResource). */
     fun observeAlbum(id: Long): Flow<Resource<Album>>
-    suspend fun getArtist(id: Long): AppResult<Artist>
-    suspend fun getPlaylist(id: Long): AppResult<Playlist>
+    fun observeArtist(id: Long): Flow<Resource<Artist>>
+    fun observePlaylist(id: Long): Flow<Resource<Playlist>>
 }

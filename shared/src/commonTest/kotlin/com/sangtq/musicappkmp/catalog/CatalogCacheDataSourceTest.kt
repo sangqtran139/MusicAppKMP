@@ -3,6 +3,8 @@ package com.sangtq.musicappkmp.catalog
 import app.cash.turbine.test
 import com.sangtq.musicappkmp.catalog.data.local.CatalogCacheDataSource
 import com.sangtq.musicappkmp.catalog.domain.model.Album
+import com.sangtq.musicappkmp.catalog.domain.model.Artist
+import com.sangtq.musicappkmp.catalog.domain.model.Playlist
 import com.sangtq.musicappkmp.catalog.domain.model.Track
 import com.sangtq.musicappkmp.core.common.DispatcherProvider
 import com.sangtq.musicappkmp.core.database.MusicDatabase
@@ -73,5 +75,33 @@ class CatalogCacheDataSourceTest {
         ds.saveAlbum(album(10, 20, 30))
         ds.saveAlbum(album(40))
         assertEquals(listOf(40L), ds.observeAlbum(1).first()?.tracks?.map { it.id })
+    }
+
+    @Test
+    fun saveArtist_thenObserve_returnsArtist() = runTest {
+        val ds = dataSource()
+        assertNull(ds.observeArtist(7).first())
+        ds.saveArtist(Artist(id = 7, name = "Eminem", pictureUrl = "pic", albumCount = 12, fanCount = 999))
+        val artist = ds.observeArtist(7).first()
+        assertEquals("Eminem", artist?.name)
+        assertEquals(12, artist?.albumCount)
+        assertEquals(999, artist?.fanCount)
+    }
+
+    @Test
+    fun savePlaylist_thenObserve_returnsPlaylistWithTracksInOrder() = runTest {
+        val ds = dataSource()
+        val playlist = Playlist(
+            id = 5,
+            title = "Mix",
+            description = "desc",
+            coverUrl = "cover",
+            trackCount = 2,
+            tracks = listOf(track(100), track(200)),
+        )
+        ds.savePlaylist(playlist)
+        val cached = ds.observePlaylist(5).first()
+        assertEquals("Mix", cached?.title)
+        assertEquals(listOf(100L, 200L), cached?.tracks?.map { it.id })
     }
 }

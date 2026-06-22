@@ -30,15 +30,15 @@
 | 0 — Nền móng | ✅ Xong (core:common/ui/designsystem, Koin, theme, **Navigation Compose** type-safe — ADR-0008) |
 | 1 — Networking + Search | ✅ Xong (Ktor + RapidAPI, catalog, search debounce + index/limit) |
 | 2 — Playback | ✅ Xong (ExoPlayer/AVPlayer, now-playing + mini-player, preview 30s) |
-| 3 — Detail + cache | ✅ SQLDelight + Album/Artist/Playlist detail + **offline cache** (`networkBoundResource` cho Album; mở rộng artist/playlist sau) |
+| 3 — Detail + cache | ✅ SQLDelight + Album/Artist/Playlist detail + **offline cache** (`networkBoundResource` cho Album + Artist + Playlist) |
 | 4 — Home + Library | 🟡 Home ✅ (network); Library ✅ (SQLDelight, bền vững qua phiên) |
 | 5 — Auth gate | 🟡 Cổng local stub ✅; polish/lyrics còn lại |
 | 6 — iOS parity + test + release | 🟡 Compile iOS ✅; chạy test/run device + release còn lại |
 
 > Code hiện nằm dạng **package trong `:shared`** (chưa tách module), build xanh Android + iOS.
-> Việc còn lại lớn nhất: **tách module** `core:*`/`feature:*` và mở rộng offline cache cho
-> artist/playlist/home. SQLDelight (liked/recent), Navigation Compose, Album/Artist/Playlist
-> detail, và `networkBoundResource` (offline-first Album) đã xong.
+> Việc còn lại lớn nhất: **tách module** `core:*`/`feature:*` (và offline cache cho search/home nếu cần).
+> SQLDelight (liked/recent), Navigation Compose, Album/Artist/Playlist detail, và offline-first cache
+> (Album/Artist/Playlist qua `networkBoundResource`) đã xong.
 
 ## Các Phase
 
@@ -70,7 +70,7 @@ Mỗi bước = 1 PR nhỏ; build phải xanh trên cả Android + iOS; thêm te
 ### Phase 3 — Detail + cache offline 🟡
 - [x] `core/database` (SQLDelight + `MusicDatabase.sq`; driver expect/actual qua `platformModule`).
 - [x] `core/data` (`networkBoundResource`) + `Resource` (core/common) — offline-first single-source-of-truth.
-- [x] Offline cache **Album** (cache SQLDelight + refresh network; reopen album offline được). Còn: mở rộng artist/playlist/search.
+- [x] Offline cache **Album + Artist + Playlist** (cache SQLDelight + refresh network; reopen offline được). Còn: search/home cache.
 - [x] **Navigation Compose** type-safe (NavHost `:shared`, route `@Serializable`, ADR-0008).
 - [x] Màn **Album detail** (`/album`, đọc `tracks.data`; entry: tap cover ở Home/Explore/Library).
 - [x] Màn **Artist detail** (`/artist`, metadata-only — proxy không có top-tracks; entry: tap tên artist ở list rows).

@@ -36,9 +36,13 @@ class CatalogRepositoryImpl(
         fetch = { api.getAlbum(id).map { dto -> cache.saveAlbum(dto.toDomain()) } },
     )
 
-    override suspend fun getArtist(id: Long): AppResult<Artist> =
-        withContext(dispatchers.io) { api.getArtist(id).map { it.toDomain() } }
+    override fun observeArtist(id: Long): Flow<Resource<Artist>> = networkBoundResource(
+        query = { cache.observeArtist(id) },
+        fetch = { api.getArtist(id).map { dto -> cache.saveArtist(dto.toDomain()) } },
+    )
 
-    override suspend fun getPlaylist(id: Long): AppResult<Playlist> =
-        withContext(dispatchers.io) { api.getPlaylist(id).map { it.toDomain() } }
+    override fun observePlaylist(id: Long): Flow<Resource<Playlist>> = networkBoundResource(
+        query = { cache.observePlaylist(id) },
+        fetch = { api.getPlaylist(id).map { dto -> cache.savePlaylist(dto.toDomain()) } },
+    )
 }
