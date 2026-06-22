@@ -30,15 +30,15 @@
 | 0 — Nền móng | ✅ Xong (core:common/ui/designsystem, Koin, theme, **Navigation Compose** type-safe — ADR-0008) |
 | 1 — Networking + Search | ✅ Xong (Ktor + RapidAPI, catalog, search debounce + index/limit) |
 | 2 — Playback | ✅ Xong (ExoPlayer/AVPlayer, now-playing + mini-player, preview 30s) |
-| 3 — Detail + cache | 🟡 SQLDelight ✅; **Album/Artist/Playlist detail ✅**; **chưa** offline catalog cache (`networkBoundResource`) |
+| 3 — Detail + cache | ✅ SQLDelight + Album/Artist/Playlist detail + **offline cache** (`networkBoundResource` cho Album; mở rộng artist/playlist sau) |
 | 4 — Home + Library | 🟡 Home ✅ (network); Library ✅ (SQLDelight, bền vững qua phiên) |
 | 5 — Auth gate | 🟡 Cổng local stub ✅; polish/lyrics còn lại |
 | 6 — iOS parity + test + release | 🟡 Compile iOS ✅; chạy test/run device + release còn lại |
 
 > Code hiện nằm dạng **package trong `:shared`** (chưa tách module), build xanh Android + iOS.
-> Việc còn lại lớn nhất: **offline catalog cache** (`networkBoundResource`) và **tách module**
-> `core:*`/`feature:*`. SQLDelight (liked/recent), Navigation Compose, và Album/Artist/Playlist
-> detail đã xong.
+> Việc còn lại lớn nhất: **tách module** `core:*`/`feature:*` và mở rộng offline cache cho
+> artist/playlist/home. SQLDelight (liked/recent), Navigation Compose, Album/Artist/Playlist
+> detail, và `networkBoundResource` (offline-first Album) đã xong.
 
 ## Các Phase
 
@@ -69,7 +69,8 @@ Mỗi bước = 1 PR nhỏ; build phải xanh trên cả Android + iOS; thêm te
 
 ### Phase 3 — Detail + cache offline 🟡
 - [x] `core/database` (SQLDelight + `MusicDatabase.sq`; driver expect/actual qua `platformModule`).
-- [ ] `core:data` (`networkBoundResource`) cho offline catalog cache.
+- [x] `core/data` (`networkBoundResource`) + `Resource` (core/common) — offline-first single-source-of-truth.
+- [x] Offline cache **Album** (cache SQLDelight + refresh network; reopen album offline được). Còn: mở rộng artist/playlist/search.
 - [x] **Navigation Compose** type-safe (NavHost `:shared`, route `@Serializable`, ADR-0008).
 - [x] Màn **Album detail** (`/album`, đọc `tracks.data`; entry: tap cover ở Home/Explore/Library).
 - [x] Màn **Artist detail** (`/artist`, metadata-only — proxy không có top-tracks; entry: tap tên artist ở list rows).
