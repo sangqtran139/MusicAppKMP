@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -25,6 +26,7 @@ import com.sangtq.musicappkmp.feature.player.presentation.PlayerIntent
 import com.sangtq.musicappkmp.feature.player.presentation.PlayerViewModel
 import com.sangtq.musicappkmp.feature.player.presentation.toPlayable
 import com.sangtq.musicappkmp.feature.search.presentation.SearchScreen
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -42,6 +44,7 @@ private enum class RootTab(val label: String) {
 fun MainScaffold() {
     val playerVm: PlayerViewModel = koinViewModel()
     val addRecent: AddRecentUseCase = koinInject()
+    val scope = rememberCoroutineScope()
     val playerState by playerVm.state.collectAsStateWithLifecycle()
 
     var selected by remember { mutableStateOf(RootTab.Home) }
@@ -49,7 +52,7 @@ fun MainScaffold() {
 
     fun playSelected(track: Track) {
         track.toPlayable()?.let {
-            addRecent(track)
+            scope.launch { addRecent(track) }
             playerVm.onIntent(PlayerIntent.Play(it))
             showNowPlaying = true
         }

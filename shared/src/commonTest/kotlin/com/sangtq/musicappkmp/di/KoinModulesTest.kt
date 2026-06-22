@@ -1,7 +1,9 @@
 package com.sangtq.musicappkmp.di
 
+import app.cash.sqldelight.db.SqlDriver
 import com.sangtq.musicappkmp.catalog.domain.repository.CatalogRepository
 import com.sangtq.musicappkmp.catalog.domain.usecase.SearchCatalogUseCase
+import com.sangtq.musicappkmp.core.database.inMemorySqlDriver
 import com.sangtq.musicappkmp.core.playback.AudioPlayer
 import com.sangtq.musicappkmp.core.playback.PlaybackStub
 import com.sangtq.musicappkmp.feature.home.domain.usecase.GetHomeSectionsUseCase
@@ -22,7 +24,12 @@ class KoinModulesTest {
     @Test
     fun appGraph_resolvesCoreDependencies() {
         val koin = startKoin {
-            modules(appModules + module { single<AudioPlayer> { PlaybackStub() } })
+            modules(
+                appModules + module {
+                    single<AudioPlayer> { PlaybackStub() }
+                    single<SqlDriver> { inMemorySqlDriver() }
+                }
+            )
         }.koin
 
         assertNotNull(koin.get<CatalogRepository>())

@@ -1,0 +1,51 @@
+-- Thư viện cá nhân lưu local (xem docs/ADR/0007, docs/Roadmap.md Phase 3/4).
+-- isExplicit lưu dạng INTEGER 0/1, map sang Boolean ở data layer (tránh ColumnAdapter).
+
+CREATE TABLE likedTrack (
+    id INTEGER NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    artistName TEXT NOT NULL,
+    albumTitle TEXT,
+    coverUrl TEXT,
+    previewUrl TEXT,
+    durationSeconds INTEGER NOT NULL,
+    isExplicit INTEGER NOT NULL,
+    likedAt INTEGER NOT NULL
+);
+
+CREATE TABLE recentTrack (
+    id INTEGER NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    artistName TEXT NOT NULL,
+    albumTitle TEXT,
+    coverUrl TEXT,
+    previewUrl TEXT,
+    durationSeconds INTEGER NOT NULL,
+    isExplicit INTEGER NOT NULL,
+    playedAt INTEGER NOT NULL
+);
+
+selectLiked:
+SELECT * FROM likedTrack ORDER BY likedAt DESC;
+
+isLiked:
+SELECT EXISTS(SELECT 1 FROM likedTrack WHERE id = :id);
+
+insertLiked:
+INSERT OR REPLACE INTO likedTrack(id, title, artistName, albumTitle, coverUrl, previewUrl, durationSeconds, isExplicit, likedAt)
+VALUES (:id, :title, :artistName, :albumTitle, :coverUrl, :previewUrl, :durationSeconds, :isExplicit, :likedAt);
+
+deleteLiked:
+DELETE FROM likedTrack WHERE id = :id;
+
+selectRecent:
+SELECT * FROM recentTrack ORDER BY playedAt DESC LIMIT :limit;
+
+insertRecent:
+INSERT OR REPLACE INTO recentTrack(id, title, artistName, albumTitle, coverUrl, previewUrl, durationSeconds, isExplicit, playedAt)
+VALUES (:id, :title, :artistName, :albumTitle, :coverUrl, :previewUrl, :durationSeconds, :isExplicit, :playedAt);
+
+trimRecent:
+DELETE FROM recentTrack WHERE id NOT IN (
+    SELECT id FROM recentTrack ORDER BY playedAt DESC LIMIT :limit
+);

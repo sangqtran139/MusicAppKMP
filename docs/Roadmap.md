@@ -30,14 +30,14 @@
 | 0 — Nền móng | ✅ Xong (core:common/ui/designsystem, Koin, theme, bottom-nav) |
 | 1 — Networking + Search | ✅ Xong (Ktor + RapidAPI, catalog, search debounce + index/limit) |
 | 2 — Playback | ✅ Xong (ExoPlayer/AVPlayer, now-playing + mini-player, preview 30s) |
-| 3 — Detail + cache | 🟡 Một phần (Recently Played in-memory; **chưa** SQLDelight, **chưa** màn detail) |
-| 4 — Home + Library | 🟡 Home ✅ (network); Library ✅ UI nhưng **in-memory** (chưa SQLDelight) |
+| 3 — Detail + cache | 🟡 SQLDelight ✅ (liked + Recently Played bền vững); **chưa** màn detail, **chưa** offline catalog cache |
+| 4 — Home + Library | 🟡 Home ✅ (network); Library ✅ (SQLDelight, bền vững qua phiên) |
 | 5 — Auth gate | 🟡 Cổng local stub ✅; polish/lyrics còn lại |
 | 6 — iOS parity + test + release | 🟡 Compile iOS ✅; chạy test/run device + release còn lại |
 
 > Code hiện nằm dạng **package trong `:shared`** (chưa tách module), build xanh Android + iOS.
-> Việc còn lại lớn nhất: **SQLDelight** (persistence liked/recent + cache offline), màn **detail**
-> (album/artist/playlist), và **tách module** `core:*`/`feature:*`.
+> Việc còn lại lớn nhất: **offline catalog cache** (`networkBoundResource`), màn **detail**
+> (album/artist/playlist), và **tách module** `core:*`/`feature:*`. SQLDelight cho liked/recent đã xong.
 
 ## Các Phase
 
@@ -67,13 +67,14 @@ Mỗi bước = 1 PR nhỏ; build phải xanh trên cả Android + iOS; thêm te
 - **Done khi:** tap kết quả → phát 30s, mini-player + now-playing đồng bộ trên cả hai nền tảng.
 
 ### Phase 3 — Detail + cache offline 🟡
-- [ ] `core:database` (SQLDelight + driver expect/actual) + `core:data` (`networkBoundResource`).
+- [x] `core/database` (SQLDelight + `MusicDatabase.sq`; driver expect/actual qua `platformModule`).
+- [ ] `core:data` (`networkBoundResource`) cho offline catalog cache.
 - [ ] Màn Album / Artist / Playlist detail (`/album`,`/artist`,`/playlist`, đọc `tracks.data`).
-- [ ] Lưu **Recently Played** local.
+- [x] Lưu **Recently Played** local (SQLDelight, cap 20, bền vững qua phiên).
 
 ### Phase 4 — Home + Library 🟡
 - [ ] `feature:home`: playlist tuyển chọn + Recently Played + sections kiểu Figma (Continue/Top Mixes).
-- [ ] `feature:library`: liked songs + playlist tự tạo (SQLDelight); chips Playlists/Artists/Albums.
+- [x] `feature:library`: liked songs (SQLDelight, bền vững). Còn lại: playlist tự tạo + chips Playlists/Artists/Albums.
 
 ### Phase 5 — Auth gate + Onboarding + polish 🟡
 - [ ] Welcome + Login UI (Figma) làm cổng local (flag DataStore) + điều hướng gate.

@@ -7,6 +7,17 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.sqldelight)
+}
+
+// SQLDelight: schema `.sq` ở src/commonMain/sqldelight; sinh API Kotlin có kiểu vào package này.
+// Driver theo nền tảng được cấp qua platformModule() (xem docs/ADR/0007).
+sqldelight {
+    databases {
+        create("MusicDatabase") {
+            packageName.set("com.sangtq.musicappkmp.core.database")
+        }
+    }
 }
 
 // RAPIDAPI_KEY: đọc từ local.properties (gitignored) hoặc biến môi trường, sinh ra một
@@ -74,9 +85,11 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.koin.android)
             implementation(libs.media3.exoplayer)
+            implementation(libs.sqldelight.driver.android)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation(libs.sqldelight.driver.native)
         }
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core)
@@ -100,12 +113,18 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.sqldelight.runtime)
+            implementation(libs.sqldelight.coroutines)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.turbine)
             implementation(libs.koin.test)
+        }
+        // Driver JVM in-memory cho Koin graph test chạy trên host (xem KoinModulesTest).
+        getByName("androidHostTest").dependencies {
+            implementation(libs.sqldelight.driver.sqlite)
         }
     }
 }
