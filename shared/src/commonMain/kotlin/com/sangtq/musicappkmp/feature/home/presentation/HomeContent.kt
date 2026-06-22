@@ -33,6 +33,7 @@ import com.sangtq.musicappkmp.feature.home.domain.model.HomeSection
 fun HomeContent(
     state: HomeUiState,
     onIntent: (HomeIntent) -> Unit,
+    onOpenAlbum: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -66,7 +67,11 @@ fun HomeContent(
                     )
                 }
                 items(state.sections, key = { it.title }) { section ->
-                    SectionRow(section = section, onClick = { onIntent(HomeIntent.TrackClicked(it)) })
+                    SectionRow(
+                        section = section,
+                        onClick = { onIntent(HomeIntent.TrackClicked(it)) },
+                        onOpenAlbum = onOpenAlbum,
+                    )
                 }
             }
         }
@@ -74,7 +79,7 @@ fun HomeContent(
 }
 
 @Composable
-private fun SectionRow(section: HomeSection, onClick: (Track) -> Unit) {
+private fun SectionRow(section: HomeSection, onClick: (Track) -> Unit, onOpenAlbum: (Long) -> Unit) {
     Column(Modifier.padding(vertical = AppSpacing.sm)) {
         Text(
             section.title,
@@ -87,20 +92,25 @@ private fun SectionRow(section: HomeSection, onClick: (Track) -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(AppSpacing.md),
         ) {
             items(section.items, key = { it.id }) { track ->
-                TrackCard(track = track, onClick = { onClick(track) })
+                TrackCard(
+                    track = track,
+                    onClick = { onClick(track) },
+                    onCoverClick = track.albumId?.let { id -> { onOpenAlbum(id) } },
+                )
             }
         }
     }
 }
 
 @Composable
-private fun TrackCard(track: Track, onClick: () -> Unit) {
+private fun TrackCard(track: Track, onClick: () -> Unit, onCoverClick: (() -> Unit)? = null) {
     Column(modifier = Modifier.width(140.dp).clickable(onClick = onClick)) {
         AppAsyncImage(
             url = track.coverUrl,
             contentDescription = track.title,
             modifier = Modifier.size(140.dp).clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .then(if (onCoverClick != null) Modifier.clickable(onClick = onCoverClick) else Modifier),
         )
         Text(
             track.title,

@@ -28,6 +28,7 @@ class LibraryLocalDataSourceTest {
         title = "Song $id",
         artistName = "Artist",
         albumTitle = null,
+        albumId = null,
         coverUrl = null,
         previewUrl = "https://example.com/$id.mp3",
         durationSeconds = 30,

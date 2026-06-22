@@ -6,6 +6,7 @@ CREATE TABLE likedTrack (
     title TEXT NOT NULL,
     artistName TEXT NOT NULL,
     albumTitle TEXT,
+    albumId INTEGER,
     coverUrl TEXT,
     previewUrl TEXT,
     durationSeconds INTEGER NOT NULL,
@@ -18,6 +19,7 @@ CREATE TABLE recentTrack (
     title TEXT NOT NULL,
     artistName TEXT NOT NULL,
     albumTitle TEXT,
+    albumId INTEGER,
     coverUrl TEXT,
     previewUrl TEXT,
     durationSeconds INTEGER NOT NULL,
@@ -32,8 +34,8 @@ isLiked:
 SELECT EXISTS(SELECT 1 FROM likedTrack WHERE id = :id);
 
 insertLiked:
-INSERT OR REPLACE INTO likedTrack(id, title, artistName, albumTitle, coverUrl, previewUrl, durationSeconds, isExplicit, likedAt)
-VALUES (:id, :title, :artistName, :albumTitle, :coverUrl, :previewUrl, :durationSeconds, :isExplicit, :likedAt);
+INSERT OR REPLACE INTO likedTrack(id, title, artistName, albumTitle, albumId, coverUrl, previewUrl, durationSeconds, isExplicit, likedAt)
+VALUES (:id, :title, :artistName, :albumTitle, :albumId, :coverUrl, :previewUrl, :durationSeconds, :isExplicit, :likedAt);
 
 deleteLiked:
 DELETE FROM likedTrack WHERE id = :id;
@@ -42,8 +44,8 @@ selectRecent:
 SELECT * FROM recentTrack ORDER BY playedAt DESC LIMIT :limit;
 
 insertRecent:
-INSERT OR REPLACE INTO recentTrack(id, title, artistName, albumTitle, coverUrl, previewUrl, durationSeconds, isExplicit, playedAt)
-VALUES (:id, :title, :artistName, :albumTitle, :coverUrl, :previewUrl, :durationSeconds, :isExplicit, :playedAt);
+INSERT OR REPLACE INTO recentTrack(id, title, artistName, albumTitle, albumId, coverUrl, previewUrl, durationSeconds, isExplicit, playedAt)
+VALUES (:id, :title, :artistName, :albumTitle, :albumId, :coverUrl, :previewUrl, :durationSeconds, :isExplicit, :playedAt);
 
 trimRecent:
 DELETE FROM recentTrack WHERE id NOT IN (

@@ -30,6 +30,7 @@ class CatalogMappersTest {
         assertEquals("Without Me", track.title)
         assertEquals("Eminem", track.artistName)
         assertEquals("The Eminem Show", track.albumTitle)
+        assertEquals(1L, track.albumId)
         assertEquals("cover_big", track.coverUrl)
         assertEquals("https://preview.mp3", track.previewUrl)
         assertEquals(290, track.durationSeconds)

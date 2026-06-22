@@ -16,7 +16,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.sangtq.musicappkmp.catalog.domain.model.Track
+import com.sangtq.musicappkmp.feature.albumdetail.presentation.AlbumDetailScreen
 import com.sangtq.musicappkmp.feature.home.presentation.HomeScreen
 import com.sangtq.musicappkmp.feature.library.domain.usecase.AddRecentUseCase
 import com.sangtq.musicappkmp.feature.library.presentation.LibraryScreen
@@ -27,18 +36,21 @@ import com.sangtq.musicappkmp.feature.player.presentation.PlayerViewModel
 import com.sangtq.musicappkmp.feature.player.presentation.toPlayable
 import com.sangtq.musicappkmp.feature.search.presentation.SearchScreen
 import kotlinx.coroutines.launch
+import kotlin.reflect.KClass
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
-private enum class RootTab(val label: String) {
-    Home("Home"),
-    Explore("Explore"),
-    Library("Library"),
-}
+private data class RootTab(val label: String, val route: Any, val routeClass: KClass<*>)
+
+private val rootTabs = listOf(
+    RootTab("Home", HomeRoute, HomeRoute::class),
+    RootTab("Explore", ExploreRoute, ExploreRoute::class),
+    RootTab("Library", LibraryRoute, LibraryRoute::class),
+)
 
 /**
- * Khung chính: bottom nav 3 tab + mini-player + now-playing overlay. PlayerViewModel hoist tại
- * đây để mini-player và now-playing dùng chung một PlaybackState.
+ * Khung chính: NavHost (3 tab + Album detail) + mini-player + now-playing overlay (ADR-0008).
+ * PlayerViewModel hoist tại đây để mini-player và now-playing dùng chung một PlaybackState.
  */
 @Composable
 fun MainScaffold() {
@@ -46,8 +58,7 @@ fun MainScaffold() {
     val addRecent: AddRecentUseCase = koinInject()
     val scope = rememberCoroutineScope()
     val playerState by playerVm.state.collectAsStateWithLifecycle()
-
-    var selected by remember { mutableStateOf(RootTab.Home) }
+    val navController = rememberNavController()
     var showNowPlaying by remember { mutableStateOf(false) }
 
     fun playSelected(track: Track) {
@@ -57,6 +68,8 @@ fun MainScaffold() {
             showNowPlaying = true
         }
     }
+
+    fun openAlbum(albumId: Long) = navController.navigate(AlbumRoute(albumId))
 
     Box(Modifier.fillMaxSize()) {
         Scaffold(
@@ -69,11 +82,20 @@ fun MainScaffold() {
                             onTogglePlayPause = { playerVm.onIntent(PlayerIntent.TogglePlayPause) },
                         )
                     }
+                    val currentEntry by navController.currentBackStackEntryAsState()
+                    val currentDestination = currentEntry?.destination
                     NavigationBar {
-                        RootTab.entries.forEach { tab ->
+                        rootTabs.forEach { tab ->
+                            val selected = currentDestination?.hierarchy?.any { it.hasRoute(tab.routeClass) } == true
                             NavigationBarItem(
-                                selected = selected == tab,
-                                onClick = { selected = tab },
+                                selected = selected,
+                                onClick = {
+                                    navController.navigate(tab.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                },
                                 icon = { Text(tab.label.first().toString()) },
                                 label = { Text(tab.label) },
                             )
@@ -82,11 +104,26 @@ fun MainScaffold() {
                 }
             },
         ) { innerPadding ->
-            Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-                when (selected) {
-                    RootTab.Home -> HomeScreen(onTrackSelected = ::playSelected)
-                    RootTab.Explore -> SearchScreen(onTrackSelected = ::playSelected)
-                    RootTab.Library -> LibraryScreen(onTrackSelected = ::playSelected)
+            NavHost(
+                navController = navController,
+                startDestination = HomeRoute,
+                modifier = Modifier.fillMaxSize().padding(innerPadding),
+            ) {
+                composable<HomeRoute> {
+                    HomeScreen(onTrackSelected = ::playSelected, onOpenAlbum = ::openAlbum)
+                }
+                composable<ExploreRoute> {
+                    SearchScreen(onTrackSelected = ::playSelected, onOpenAlbum = ::openAlbum)
+                }
+                composable<LibraryRoute> {
+                    LibraryScreen(onTrackSelected = ::playSelected, onOpenAlbum = ::openAlbum)
+                }
+                composable<AlbumRoute> { entry ->
+                    AlbumDetailScreen(
+                        albumId = entry.toRoute<AlbumRoute>().albumId,
+                        onBack = { navController.popBackStack() },
+                        onTrackSelected = ::playSelected,
+                    )
                 }
             }
         }

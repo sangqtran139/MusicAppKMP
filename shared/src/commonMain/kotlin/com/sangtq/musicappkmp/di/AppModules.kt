@@ -2,6 +2,7 @@ package com.sangtq.musicappkmp.di
 
 import com.sangtq.musicappkmp.catalog.di.catalogModule
 import com.sangtq.musicappkmp.core.database.databaseModule
+import com.sangtq.musicappkmp.feature.albumdetail.di.albumDetailModule
 import com.sangtq.musicappkmp.feature.home.di.homeModule
 import com.sangtq.musicappkmp.feature.library.di.libraryModule
 import com.sangtq.musicappkmp.feature.player.di.playerModule
@@ -16,4 +17,5 @@ val appModules: List<Module> = listOf(
     playerModule,
     homeModule,
     libraryModule,
+    albumDetailModule,
 )
