@@ -45,7 +45,6 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.koin.android)
-            implementation(libs.media3.exoplayer)
             implementation(libs.sqldelight.driver.android)
         }
         iosMain.dependencies {
@@ -59,6 +58,7 @@ kotlin {
             implementation(projects.core.data)
             implementation(projects.core.network)
             implementation(projects.core.database)
+            implementation(projects.core.playback)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
