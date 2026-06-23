@@ -88,7 +88,8 @@ Mỗi bước = 1 PR nhỏ; build phải xanh trên cả Android + iOS; thêm te
 
 ### Phase 6 — iOS parity + test + release 🟡
 - [ ] Rà parity iOS (AVPlayer, framework), bù test (UseCase/Mapper/ViewModel + Turbine, Koin `verify()`).
-- [ ] Release prep: minify/R8, ký, background audio mode.
+- [x] Release prep — **R8/minify + shrinkResources** + proguard-rules (serialization keep cho DTO/route). `assembleRelease` xanh, APK ~2.3M (debug 18M).
+- [ ] Còn lại: **ký APK** (cần keystore — secret, ngoài repo) + **background audio** (foreground service) + smoke run trên device.
 
 ## Tham chiếu
 [`Architecture.md`](Architecture.md) · [`ProjectStructure.md`](ProjectStructure.md) ·
