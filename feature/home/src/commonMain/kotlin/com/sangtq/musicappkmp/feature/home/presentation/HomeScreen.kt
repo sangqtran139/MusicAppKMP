@@ -13,6 +13,7 @@ fun HomeScreen(
     onTrackSelected: (Track) -> Unit,
     onOpenAlbum: (Long) -> Unit,
     onOpenPlaylist: (Long) -> Unit,
+    recent: List<Track>,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
@@ -31,6 +32,7 @@ fun HomeScreen(
         onIntent = viewModel::onIntent,
         onOpenAlbum = onOpenAlbum,
         onOpenPlaylist = onOpenPlaylist,
+        recent = recent,
         modifier = modifier,
     )
 }

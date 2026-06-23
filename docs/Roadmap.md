@@ -79,7 +79,7 @@ Mỗi bước = 1 PR nhỏ; build phải xanh trên cả Android + iOS; thêm te
 - [x] Lưu **Recently Played** local (SQLDelight, cap 20, bền vững qua phiên).
 
 ### Phase 4 — Home + Library 🟡
-- [x] `feature:home`: **Featured playlists** (ID seed cố định) + sections theo chủ đề. Còn lại: Recently Played trên Home + curate playlist ID thật.
+- [x] `feature:home`: **Featured playlists** + sections theo chủ đề + **Recently Played** (bridge qua composition root để không phá ADR feature↔feature). Playlist seed ID đã curate.
 - [x] `feature:library`: liked songs (SQLDelight, bền vững). Còn lại: playlist tự tạo + chips Playlists/Artists/Albums.
 
 ### Phase 5 — Auth gate + Onboarding + polish 🟡

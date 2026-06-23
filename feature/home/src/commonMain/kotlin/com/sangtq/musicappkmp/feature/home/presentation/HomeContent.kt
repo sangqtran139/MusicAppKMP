@@ -37,6 +37,7 @@ fun HomeContent(
     onIntent: (HomeIntent) -> Unit,
     onOpenAlbum: (Long) -> Unit,
     onOpenPlaylist: (Long) -> Unit,
+    recent: List<Track>,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -61,6 +62,15 @@ fun HomeContent(
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.padding(horizontal = AppSpacing.md, vertical = AppSpacing.sm),
                     )
+                }
+                if (recent.isNotEmpty()) {
+                    item {
+                        SectionRow(
+                            section = HomeSection("Recently played", recent),
+                            onClick = { onIntent(HomeIntent.TrackClicked(it)) },
+                            onOpenAlbum = onOpenAlbum,
+                        )
+                    }
                 }
                 if (state.playlists.isNotEmpty()) {
                     item {
