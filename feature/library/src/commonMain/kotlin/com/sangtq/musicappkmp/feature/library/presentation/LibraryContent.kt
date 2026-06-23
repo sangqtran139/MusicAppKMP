@@ -215,7 +215,7 @@ private fun IconText(
 }
 
 @Composable
-private fun CreatePlaylistDialog(onCreate: (String) -> Unit, onDismiss: () -> Unit) {
+internal fun CreatePlaylistDialog(onCreate: (String) -> Unit, onDismiss: () -> Unit) {
     var name by remember { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -234,7 +234,7 @@ private fun CreatePlaylistDialog(onCreate: (String) -> Unit, onDismiss: () -> Un
 }
 
 @Composable
-private fun AddToPlaylistDialog(
+internal fun AddToPlaylistDialog(
     trackTitle: String,
     playlists: List<UserPlaylist>,
     onPick: (Long) -> Unit,
