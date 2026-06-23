@@ -32,7 +32,7 @@
 | 2 — Playback | ✅ Xong (ExoPlayer/AVPlayer, now-playing + mini-player, preview 30s) |
 | 3 — Detail + cache | ✅ SQLDelight + Album/Artist/Playlist detail + **offline cache** (`networkBoundResource` cho Album + Artist + Playlist) |
 | 4 — Home + Library | 🟡 Home ✅ (network); Library ✅ (SQLDelight, bền vững qua phiên) |
-| 5 — Auth gate | 🟡 Cổng local stub ✅; polish/lyrics còn lại |
+| 5 — Auth gate | ✅ Cổng local stub + polish (Loading/Empty/Error dùng chung, lyrics placeholder) |
 | 6 — iOS parity + test + release | 🟡 Compile iOS ✅; chạy test/run device + release còn lại |
 
 > **Đã tách module** theo ADR-0009: `core:*` (common/ui/designsystem/data/network/database/playback)
@@ -79,12 +79,12 @@ Mỗi bước = 1 PR nhỏ; build phải xanh trên cả Android + iOS; thêm te
 - [x] Lưu **Recently Played** local (SQLDelight, cap 20, bền vững qua phiên).
 
 ### Phase 4 — Home + Library 🟡
-- [x] `feature:home`: **Featured playlists** (ID seed cố định) + sections theo chủ đề. Còn lại: Recently Played trên Home + curate playlist ID thật.
+- [x] `feature:home`: **Featured playlists** + sections theo chủ đề + **Recently Played** (bridge qua composition root để không phá ADR feature↔feature). Playlist seed ID đã curate.
 - [x] `feature:library`: liked songs (SQLDelight, bền vững). Còn lại: playlist tự tạo + chips Playlists/Artists/Albums.
 
 ### Phase 5 — Auth gate + Onboarding + polish 🟡
 - [ ] Welcome + Login UI (Figma) làm cổng local (flag DataStore) + điều hướng gate.
-- [ ] Polish: empty/loading/error states, lyrics placeholder, chi tiết theo Figma.
+- [x] Polish: `LoadingState`/`EmptyState`/`ErrorState` dùng chung (core:designsystem) áp cho Home/Search/Album/Artist/Playlist; **lyrics placeholder** ở now-playing (proxy không có lyrics).
 
 ### Phase 6 — iOS parity + test + release 🟡
 - [ ] Rà parity iOS (AVPlayer, framework), bù test (UseCase/Mapper/ViewModel + Turbine, Koin `verify()`).

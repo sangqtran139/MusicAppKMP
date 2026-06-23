@@ -30,6 +30,7 @@ import com.sangtq.musicappkmp.feature.artistdetail.presentation.ArtistDetailScre
 import com.sangtq.musicappkmp.feature.home.presentation.HomeScreen
 import com.sangtq.musicappkmp.feature.playlistdetail.presentation.PlaylistDetailScreen
 import com.sangtq.musicappkmp.feature.library.domain.usecase.AddRecentUseCase
+import com.sangtq.musicappkmp.feature.library.domain.usecase.ObserveRecentUseCase
 import com.sangtq.musicappkmp.feature.library.presentation.LibraryScreen
 import com.sangtq.musicappkmp.feature.player.presentation.MiniPlayer
 import com.sangtq.musicappkmp.feature.player.presentation.PlayerContent
@@ -58,6 +59,9 @@ private val rootTabs = listOf(
 fun MainScaffold() {
     val playerVm: PlayerViewModel = koinViewModel()
     val addRecent: AddRecentUseCase = koinInject()
+    val observeRecent: ObserveRecentUseCase = koinInject()
+    // Recently Played sống ở feature:library; bridge qua composition root để Home không phụ thuộc feature (ADR-0009).
+    val recent by observeRecent().collectAsStateWithLifecycle(emptyList())
     val scope = rememberCoroutineScope()
     val playerState by playerVm.state.collectAsStateWithLifecycle()
     val navController = rememberNavController()
@@ -118,6 +122,7 @@ fun MainScaffold() {
                         onTrackSelected = ::playSelected,
                         onOpenAlbum = ::openAlbum,
                         onOpenPlaylist = ::openPlaylist,
+                        recent = recent,
                     )
                 }
                 composable<ExploreRoute> {

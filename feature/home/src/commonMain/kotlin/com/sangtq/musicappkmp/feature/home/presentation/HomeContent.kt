@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sangtq.musicappkmp.catalog.domain.model.Track
 import com.sangtq.musicappkmp.core.designsystem.component.AppAsyncImage
+import com.sangtq.musicappkmp.core.designsystem.component.ErrorState
 import com.sangtq.musicappkmp.core.designsystem.theme.AppSpacing
 import com.sangtq.musicappkmp.feature.home.domain.model.FeaturedPlaylist
 import com.sangtq.musicappkmp.feature.home.domain.model.HomeSection
@@ -36,6 +37,7 @@ fun HomeContent(
     onIntent: (HomeIntent) -> Unit,
     onOpenAlbum: (Long) -> Unit,
     onOpenPlaylist: (Long) -> Unit,
+    recent: List<Track>,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -43,18 +45,11 @@ fun HomeContent(
             state.isLoading && state.sections.isEmpty() ->
                 CircularProgressIndicator(Modifier.align(Alignment.Center))
 
-            state.error != null && state.sections.isEmpty() -> Column(
-                Modifier.align(Alignment.Center),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
-            ) {
-                Text(state.error, color = MaterialTheme.colorScheme.error)
-                Text(
-                    "Tap to retry",
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable { onIntent(HomeIntent.Retry) }.padding(AppSpacing.sm),
-                )
-            }
+            state.error != null && state.sections.isEmpty() -> ErrorState(
+                message = state.error,
+                onRetry = { onIntent(HomeIntent.Retry) },
+                modifier = Modifier.align(Alignment.Center),
+            )
 
             else -> LazyColumn(
                 modifier = Modifier.fillMaxSize().safeContentPadding(),
@@ -67,6 +62,15 @@ fun HomeContent(
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.padding(horizontal = AppSpacing.md, vertical = AppSpacing.sm),
                     )
+                }
+                if (recent.isNotEmpty()) {
+                    item {
+                        SectionRow(
+                            section = HomeSection("Recently played", recent),
+                            onClick = { onIntent(HomeIntent.TrackClicked(it)) },
+                            onOpenAlbum = onOpenAlbum,
+                        )
+                    }
                 }
                 if (state.playlists.isNotEmpty()) {
                     item {

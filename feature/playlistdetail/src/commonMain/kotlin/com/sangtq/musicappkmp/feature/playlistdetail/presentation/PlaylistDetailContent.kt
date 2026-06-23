@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.sangtq.musicappkmp.catalog.domain.model.Playlist
 import com.sangtq.musicappkmp.catalog.domain.model.Track
 import com.sangtq.musicappkmp.core.designsystem.component.AppAsyncImage
+import com.sangtq.musicappkmp.core.designsystem.component.ErrorState
 import com.sangtq.musicappkmp.core.designsystem.theme.AppSpacing
 
 @Composable
@@ -147,21 +148,5 @@ private fun TrackRow(track: Track, onClick: () -> Unit, onArtistClick: (() -> Un
                 modifier = if (onArtistClick != null) Modifier.clickable(onClick = onArtistClick) else Modifier,
             )
         }
-    }
-}
-
-@Composable
-private fun ErrorState(message: String, onRetry: () -> Unit, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
-    ) {
-        Text(message, color = MaterialTheme.colorScheme.error)
-        Text(
-            "Tap to retry",
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.clickable(onClick = onRetry).padding(AppSpacing.sm),
-        )
     }
 }
