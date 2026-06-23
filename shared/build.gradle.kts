@@ -6,17 +6,6 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.sqldelight)
-}
-
-// SQLDelight: schema `.sq` ở src/commonMain/sqldelight; sinh API Kotlin có kiểu vào package này.
-// Driver theo nền tảng được cấp qua platformModule() (xem docs/ADR/0007).
-sqldelight {
-    databases {
-        create("MusicDatabase") {
-            packageName.set("com.sangtq.musicappkmp.core.database")
-        }
-    }
 }
 
 kotlin {
@@ -27,6 +16,11 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "Shared"
             isStatic = true
+        }
+        // SQLDelight native driver (SQLiter) cần link system sqlite3. Cờ này do plugin SQLDelight
+        // thêm vào module áp plugin (:core:database) — nhưng binary iOS link ở :shared nên thêm tay.
+        iosTarget.binaries.all {
+            linkerOpts("-lsqlite3")
         }
     }
     
@@ -64,6 +58,7 @@ kotlin {
             implementation(projects.core.designsystem)
             implementation(projects.core.data)
             implementation(projects.core.network)
+            implementation(projects.core.database)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
@@ -83,8 +78,6 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.androidx.navigation.compose)
-            implementation(libs.sqldelight.runtime)
-            implementation(libs.sqldelight.coroutines)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
