@@ -2,6 +2,8 @@ package com.sangtq.musicappkmp.feature.player.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,6 +47,7 @@ fun PlayerContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .safeContentPadding()
+            .verticalScroll(rememberScrollState())
             .padding(AppSpacing.lg),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -116,6 +119,25 @@ fun PlayerContent(
                 if (state.isPlaying) "❚❚" else "▶",
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onPrimary,
+            )
+        }
+
+        // Lyrics: Deezer proxy không có endpoint lyrics (docs/Api/DeezerApi.md) → placeholder.
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(top = AppSpacing.xl),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                "Lyrics",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+            Text(
+                "Lyrics aren't available for previews.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = AppSpacing.sm),
             )
         }
     }

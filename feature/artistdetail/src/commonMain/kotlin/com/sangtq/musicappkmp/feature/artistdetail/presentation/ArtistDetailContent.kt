@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sangtq.musicappkmp.catalog.domain.model.Artist
 import com.sangtq.musicappkmp.core.designsystem.component.AppAsyncImage
+import com.sangtq.musicappkmp.core.designsystem.component.ErrorState
 import com.sangtq.musicappkmp.core.designsystem.theme.AppSpacing
 
 @Composable
@@ -93,22 +94,6 @@ private fun ArtistHeader(artist: Artist, modifier: Modifier = Modifier) {
             "${artist.albumCount} albums · ${artist.fanCount} fans",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
-}
-
-@Composable
-private fun ErrorState(message: String, onRetry: () -> Unit, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
-    ) {
-        Text(message, color = MaterialTheme.colorScheme.error)
-        Text(
-            "Tap to retry",
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.clickable(onClick = onRetry).padding(AppSpacing.sm),
         )
     }
 }
