@@ -1,0 +1,55 @@
+-- Playlist tự tạo (local). isExplicit INTEGER 0/1, map Boolean ở data layer.
+
+CREATE TABLE userPlaylist (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    createdAt INTEGER NOT NULL
+);
+
+CREATE TABLE userPlaylistTrack (
+    playlistId INTEGER NOT NULL,
+    trackId INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    artistName TEXT NOT NULL,
+    artistId INTEGER,
+    albumTitle TEXT,
+    albumId INTEGER,
+    coverUrl TEXT,
+    previewUrl TEXT,
+    durationSeconds INTEGER NOT NULL,
+    isExplicit INTEGER NOT NULL,
+    addedAt INTEGER NOT NULL,
+    PRIMARY KEY (playlistId, trackId)
+);
+
+createPlaylist:
+INSERT INTO userPlaylist(name, createdAt) VALUES (:name, :createdAt);
+
+lastInsertedId:
+SELECT last_insert_rowid();
+
+deletePlaylist:
+DELETE FROM userPlaylist WHERE id = :id;
+
+deleteAllTracksOf:
+DELETE FROM userPlaylistTrack WHERE playlistId = :id;
+
+selectPlaylistsWithMeta:
+SELECT p.id, p.name, COUNT(t.trackId) AS trackCount, MIN(t.coverUrl) AS coverUrl
+FROM userPlaylist p
+LEFT JOIN userPlaylistTrack t ON t.playlistId = p.id
+GROUP BY p.id, p.name
+ORDER BY p.createdAt DESC;
+
+selectPlaylistName:
+SELECT name FROM userPlaylist WHERE id = :id;
+
+selectPlaylistTracks:
+SELECT * FROM userPlaylistTrack WHERE playlistId = :id ORDER BY addedAt;
+
+addTrack:
+INSERT OR REPLACE INTO userPlaylistTrack(playlistId, trackId, title, artistName, artistId, albumTitle, albumId, coverUrl, previewUrl, durationSeconds, isExplicit, addedAt)
+VALUES (:playlistId, :trackId, :title, :artistName, :artistId, :albumTitle, :albumId, :coverUrl, :previewUrl, :durationSeconds, :isExplicit, :addedAt);
+
+removeTrack:
+DELETE FROM userPlaylistTrack WHERE playlistId = :playlistId AND trackId = :trackId;

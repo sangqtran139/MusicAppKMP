@@ -31,7 +31,7 @@
 | 1 — Networking + Search | ✅ Xong (Ktor + RapidAPI, catalog, search debounce + index/limit) |
 | 2 — Playback | ✅ Xong (ExoPlayer/AVPlayer, now-playing + mini-player, preview 30s) |
 | 3 — Detail + cache | ✅ SQLDelight + Album/Artist/Playlist detail + **offline cache** (`networkBoundResource` cho Album + Artist + Playlist) |
-| 4 — Home + Library | 🟡 Home ✅ (network); Library ✅ (SQLDelight, bền vững qua phiên) |
+| 4 — Home + Library | ✅ Home (network + Recently Played) + Library (liked/recent + **playlist tự tạo**, SQLDelight). Còn chips lọc (nice-to-have) |
 | 5 — Auth gate | ✅ Cổng local stub + polish (Loading/Empty/Error dùng chung, lyrics placeholder) |
 | 6 — iOS parity + test + release | 🟡 Compile iOS ✅; chạy test/run device + release còn lại |
 
@@ -80,7 +80,7 @@ Mỗi bước = 1 PR nhỏ; build phải xanh trên cả Android + iOS; thêm te
 
 ### Phase 4 — Home + Library 🟡
 - [x] `feature:home`: **Featured playlists** + sections theo chủ đề + **Recently Played** (bridge qua composition root để không phá ADR feature↔feature). Playlist seed ID đã curate.
-- [x] `feature:library`: liked songs (SQLDelight, bền vững). Còn lại: playlist tự tạo + chips Playlists/Artists/Albums.
+- [x] `feature:library`: liked songs + **playlist tự tạo** (tạo/xoá, thêm/bớt track, xem chi tiết — SQLDelight). Còn lại (nice-to-have): chips lọc Playlists/Artists/Albums.
 
 ### Phase 5 — Auth gate + Onboarding + polish 🟡
 - [ ] Welcome + Login UI (Figma) làm cổng local (flag DataStore) + điều hướng gate.

@@ -23,3 +23,6 @@ data class ArtistRoute(val artistId: Long)
 
 @Serializable
 data class PlaylistRoute(val playlistId: Long)
+
+@Serializable
+data class UserPlaylistRoute(val playlistId: Long)
