@@ -36,7 +36,8 @@
 | 6 — iOS parity + test + release | 🟡 Compile iOS ✅; chạy test/run device + release còn lại |
 
 > **Đã tách module** theo ADR-0009: `core:*` (common/ui/designsystem/data/network/database/playback)
-> + `catalog` + `feature:*` (8 feature); `:shared` chỉ còn ráp app (App/MainScaffold/NavHost/DI/driver).
+> + **`:domain` (thuần, độc lập — gom toàn bộ model/repository/usecase)** + `catalog` (data-only)
+> + `feature:*` (8 feature); `:shared` chỉ còn ráp app (App/MainScaffold/NavHost/DI/driver).
 > Cấu hình build lặp lại gom vào **`build-logic`** (convention plugins: `musicapp.kmp.library`,
 > `musicapp.kmp.library.compose`, `musicapp.feature`). Build xanh Android + iOS + iOS framework.
 > Còn lại (tùy chọn): offline cache cho search/home; bù test ViewModel + chạy device; release prep.

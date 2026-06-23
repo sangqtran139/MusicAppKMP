@@ -17,7 +17,7 @@ kotlin {
             implementation(project(":core:common"))
             implementation(project(":core:ui"))
             implementation(project(":core:designsystem"))
-            implementation(project(":catalog"))
+            implementation(project(":domain"))
             implementation(libs.findLibrary("kotlinx-coroutines-core").get())
             implementation(libs.findLibrary("koin-core").get())
             implementation(libs.findLibrary("koin-compose-viewmodel").get())

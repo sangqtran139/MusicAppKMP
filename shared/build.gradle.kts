@@ -59,6 +59,7 @@ kotlin {
             implementation(projects.core.network)
             implementation(projects.core.database)
             implementation(projects.core.playback)
+            implementation(projects.domain)
             implementation(projects.catalog)
             implementation(projects.feature.auth)
             implementation(projects.feature.home)
