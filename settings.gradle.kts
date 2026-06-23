@@ -2,6 +2,7 @@ rootProject.name = "MusicAppKMP"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             mavenContent {
@@ -30,3 +31,19 @@ dependencyResolutionManagement {
 
 include(":androidApp")
 include(":shared")
+include(":core:common")
+include(":core:ui")
+include(":core:designsystem")
+include(":core:data")
+include(":core:network")
+include(":core:database")
+include(":core:playback")
+include(":catalog")
+include(":feature:auth")
+include(":feature:home")
+include(":feature:library")
+include(":feature:search")
+include(":feature:player")
+include(":feature:albumdetail")
+include(":feature:artistdetail")
+include(":feature:playlistdetail")

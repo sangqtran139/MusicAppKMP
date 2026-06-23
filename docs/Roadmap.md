@@ -35,10 +35,11 @@
 | 5 — Auth gate | 🟡 Cổng local stub ✅; polish/lyrics còn lại |
 | 6 — iOS parity + test + release | 🟡 Compile iOS ✅; chạy test/run device + release còn lại |
 
-> Code hiện nằm dạng **package trong `:shared`** (chưa tách module), build xanh Android + iOS.
-> Việc còn lại lớn nhất: **tách module** `core:*`/`feature:*` (và offline cache cho search/home nếu cần).
-> SQLDelight (liked/recent), Navigation Compose, Album/Artist/Playlist detail, và offline-first cache
-> (Album/Artist/Playlist qua `networkBoundResource`) đã xong.
+> **Đã tách module** theo ADR-0009: `core:*` (common/ui/designsystem/data/network/database/playback)
+> + `catalog` + `feature:*` (8 feature); `:shared` chỉ còn ráp app (App/MainScaffold/NavHost/DI/driver).
+> Cấu hình build lặp lại gom vào **`build-logic`** (convention plugins: `musicapp.kmp.library`,
+> `musicapp.kmp.library.compose`, `musicapp.feature`). Build xanh Android + iOS + iOS framework.
+> Còn lại (tùy chọn): offline cache cho search/home; bù test ViewModel + chạy device; release prep.
 
 ## Các Phase
 
