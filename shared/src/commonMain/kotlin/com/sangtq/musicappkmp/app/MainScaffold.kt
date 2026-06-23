@@ -32,6 +32,7 @@ import com.sangtq.musicappkmp.feature.playlistdetail.presentation.PlaylistDetail
 import com.sangtq.musicappkmp.feature.library.domain.usecase.AddRecentUseCase
 import com.sangtq.musicappkmp.feature.library.domain.usecase.ObserveRecentUseCase
 import com.sangtq.musicappkmp.feature.library.presentation.LibraryScreen
+import com.sangtq.musicappkmp.feature.library.presentation.UserPlaylistDetailScreen
 import com.sangtq.musicappkmp.feature.player.presentation.MiniPlayer
 import com.sangtq.musicappkmp.feature.player.presentation.PlayerContent
 import com.sangtq.musicappkmp.feature.player.presentation.PlayerIntent
@@ -78,6 +79,7 @@ fun MainScaffold() {
     fun openAlbum(albumId: Long) = navController.navigate(AlbumRoute(albumId))
     fun openArtist(artistId: Long) = navController.navigate(ArtistRoute(artistId))
     fun openPlaylist(playlistId: Long) = navController.navigate(PlaylistRoute(playlistId))
+    fun openUserPlaylist(playlistId: Long) = navController.navigate(UserPlaylistRoute(playlistId))
 
     Box(Modifier.fillMaxSize()) {
         Scaffold(
@@ -137,6 +139,7 @@ fun MainScaffold() {
                         onTrackSelected = ::playSelected,
                         onOpenAlbum = ::openAlbum,
                         onOpenArtist = ::openArtist,
+                        onOpenPlaylist = ::openUserPlaylist,
                     )
                 }
                 composable<AlbumRoute> { entry ->
@@ -159,6 +162,13 @@ fun MainScaffold() {
                         onBack = { navController.popBackStack() },
                         onTrackSelected = ::playSelected,
                         onOpenArtist = ::openArtist,
+                    )
+                }
+                composable<UserPlaylistRoute> { entry ->
+                    UserPlaylistDetailScreen(
+                        playlistId = entry.toRoute<UserPlaylistRoute>().playlistId,
+                        onBack = { navController.popBackStack() },
+                        onTrackSelected = ::playSelected,
                     )
                 }
             }

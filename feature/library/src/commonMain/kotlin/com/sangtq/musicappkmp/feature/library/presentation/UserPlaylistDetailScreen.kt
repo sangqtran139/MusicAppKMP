@@ -7,32 +7,25 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangtq.musicappkmp.catalog.domain.model.Track
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
-fun LibraryScreen(
+fun UserPlaylistDetailScreen(
+    playlistId: Long,
+    onBack: () -> Unit,
     onTrackSelected: (Track) -> Unit,
-    onOpenAlbum: (Long) -> Unit,
-    onOpenArtist: (Long) -> Unit,
-    onOpenPlaylist: (Long) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LibraryViewModel = koinViewModel(),
+    viewModel: UserPlaylistDetailViewModel = koinViewModel { parametersOf(playlistId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
-                is LibraryEffect.OpenPlayer -> onTrackSelected(effect.track)
-                is LibraryEffect.OpenPlaylist -> onOpenPlaylist(effect.id)
+                is UserPlaylistDetailEffect.OpenPlayer -> onTrackSelected(effect.track)
             }
         }
     }
 
-    LibraryContent(
-        state = state,
-        onIntent = viewModel::onIntent,
-        onOpenAlbum = onOpenAlbum,
-        onOpenArtist = onOpenArtist,
-        modifier = modifier,
-    )
+    UserPlaylistDetailContent(state = state, onIntent = viewModel::onIntent, onBack = onBack, modifier = modifier)
 }
