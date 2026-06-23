@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -17,35 +16,6 @@ sqldelight {
         create("MusicDatabase") {
             packageName.set("com.sangtq.musicappkmp.core.database")
         }
-    }
-}
-
-// RAPIDAPI_KEY: đọc từ local.properties (gitignored) hoặc biến môi trường, sinh ra một
-// object Kotlin lúc build. KHÔNG hardcode key trong source. Xem docs/NetworkingGuide.md.
-val rapidApiKey: String = run {
-    val props = Properties()
-    val f = rootProject.file("local.properties")
-    if (f.exists()) f.inputStream().use { props.load(it) }
-    props.getProperty("RAPIDAPI_KEY") ?: System.getenv("RAPIDAPI_KEY") ?: ""
-}
-
-val generateBuildKonfig = tasks.register("generateBuildKonfig") {
-    val outDir = layout.buildDirectory.dir("generated/buildkonfig/kotlin")
-    outputs.dir(outDir)
-    val key = rapidApiKey
-    inputs.property("rapidApiKey", key)
-    doLast {
-        val pkgDir = outDir.get().asFile.resolve("com/sangtq/musicappkmp/core/config")
-        pkgDir.mkdirs()
-        pkgDir.resolve("BuildKonfig.kt").writeText(
-            """
-            package com.sangtq.musicappkmp.core.config
-
-            internal object BuildKonfig {
-                const val RAPIDAPI_KEY: String = "$key"
-            }
-            """.trimIndent() + "\n"
-        )
     }
 }
 
@@ -77,9 +47,6 @@ kotlin {
     }
     
     sourceSets {
-        commonMain {
-            kotlin.srcDir(generateBuildKonfig)
-        }
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.ktor.client.okhttp)
@@ -96,6 +63,7 @@ kotlin {
             implementation(projects.core.ui)
             implementation(projects.core.designsystem)
             implementation(projects.core.data)
+            implementation(projects.core.network)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
@@ -103,9 +71,6 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.contentNegotiation)
-            implementation(libs.ktor.serialization.json)
-            implementation(libs.ktor.client.logging)
             implementation(libs.kermit)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor3)
