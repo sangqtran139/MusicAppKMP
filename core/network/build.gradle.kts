@@ -1,9 +1,7 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidMultiplatformLibrary)
+    id("musicapp.kmp.library")
 }
 
 // RAPIDAPI_KEY: đọc từ local.properties (gitignored) hoặc biến môi trường, sinh ra một object
@@ -36,17 +34,8 @@ val generateBuildKonfig = tasks.register("generateBuildKonfig") {
 }
 
 kotlin {
-    iosArm64()
-    iosSimulatorArm64()
-
     androidLibrary {
         namespace = "com.sangtq.musicappkmp.core.network"
-        compileSdk = libs.versions.android.compileSdk.get().toInt()
-        minSdk = libs.versions.android.minSdk.get().toInt()
-
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_11
-        }
     }
 
     sourceSets {
