@@ -28,5 +28,10 @@ kotlin {
             implementation(libs.findLibrary("androidx-lifecycle-viewmodelCompose").get())
             implementation(libs.findLibrary("androidx-lifecycle-runtimeCompose").get())
         }
+        commonTest.dependencies {
+            implementation(libs.findLibrary("kotlin-test").get())
+            implementation(libs.findLibrary("kotlinx-coroutines-test").get())
+            implementation(libs.findLibrary("turbine").get())
+        }
     }
 }
