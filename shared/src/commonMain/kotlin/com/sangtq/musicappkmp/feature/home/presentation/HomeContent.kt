@@ -27,12 +27,15 @@ import androidx.compose.ui.unit.dp
 import com.sangtq.musicappkmp.catalog.domain.model.Track
 import com.sangtq.musicappkmp.core.designsystem.component.AppAsyncImage
 import com.sangtq.musicappkmp.core.designsystem.theme.AppSpacing
+import com.sangtq.musicappkmp.feature.home.domain.model.FeaturedPlaylist
 import com.sangtq.musicappkmp.feature.home.domain.model.HomeSection
 
 @Composable
 fun HomeContent(
     state: HomeUiState,
     onIntent: (HomeIntent) -> Unit,
+    onOpenAlbum: (Long) -> Unit,
+    onOpenPlaylist: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -65,8 +68,17 @@ fun HomeContent(
                         modifier = Modifier.padding(horizontal = AppSpacing.md, vertical = AppSpacing.sm),
                     )
                 }
+                if (state.playlists.isNotEmpty()) {
+                    item {
+                        FeaturedPlaylistsRow(playlists = state.playlists, onOpenPlaylist = onOpenPlaylist)
+                    }
+                }
                 items(state.sections, key = { it.title }) { section ->
-                    SectionRow(section = section, onClick = { onIntent(HomeIntent.TrackClicked(it)) })
+                    SectionRow(
+                        section = section,
+                        onClick = { onIntent(HomeIntent.TrackClicked(it)) },
+                        onOpenAlbum = onOpenAlbum,
+                    )
                 }
             }
         }
@@ -74,7 +86,42 @@ fun HomeContent(
 }
 
 @Composable
-private fun SectionRow(section: HomeSection, onClick: (Track) -> Unit) {
+private fun FeaturedPlaylistsRow(playlists: List<FeaturedPlaylist>, onOpenPlaylist: (Long) -> Unit) {
+    Column(Modifier.padding(vertical = AppSpacing.sm)) {
+        Text(
+            "Featured playlists",
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.padding(horizontal = AppSpacing.md, vertical = AppSpacing.sm),
+        )
+        LazyRow(
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = AppSpacing.md),
+            horizontalArrangement = Arrangement.spacedBy(AppSpacing.md),
+        ) {
+            items(playlists, key = { it.id }) { playlist ->
+                Column(modifier = Modifier.width(140.dp).clickable { onOpenPlaylist(playlist.id) }) {
+                    AppAsyncImage(
+                        url = playlist.coverUrl,
+                        contentDescription = playlist.title,
+                        modifier = Modifier.size(140.dp).clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                    )
+                    Text(
+                        playlist.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(top = AppSpacing.xs).fillMaxWidth(),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SectionRow(section: HomeSection, onClick: (Track) -> Unit, onOpenAlbum: (Long) -> Unit) {
     Column(Modifier.padding(vertical = AppSpacing.sm)) {
         Text(
             section.title,
@@ -87,20 +134,25 @@ private fun SectionRow(section: HomeSection, onClick: (Track) -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(AppSpacing.md),
         ) {
             items(section.items, key = { it.id }) { track ->
-                TrackCard(track = track, onClick = { onClick(track) })
+                TrackCard(
+                    track = track,
+                    onClick = { onClick(track) },
+                    onCoverClick = track.albumId?.let { id -> { onOpenAlbum(id) } },
+                )
             }
         }
     }
 }
 
 @Composable
-private fun TrackCard(track: Track, onClick: () -> Unit) {
+private fun TrackCard(track: Track, onClick: () -> Unit, onCoverClick: (() -> Unit)? = null) {
     Column(modifier = Modifier.width(140.dp).clickable(onClick = onClick)) {
         AppAsyncImage(
             url = track.coverUrl,
             contentDescription = track.title,
             modifier = Modifier.size(140.dp).clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .then(if (onCoverClick != null) Modifier.clickable(onClick = onCoverClick) else Modifier),
         )
         Text(
             track.title,

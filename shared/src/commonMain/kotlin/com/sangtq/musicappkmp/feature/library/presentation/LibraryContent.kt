@@ -31,6 +31,8 @@ import com.sangtq.musicappkmp.core.designsystem.theme.AppSpacing
 fun LibraryContent(
     state: LibraryUiState,
     onIntent: (LibraryIntent) -> Unit,
+    onOpenAlbum: (Long) -> Unit,
+    onOpenArtist: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -51,7 +53,7 @@ fun LibraryContent(
             item { EmptyHint("Tap the heart on a track to save it here") }
         } else {
             items(state.liked, key = { "liked-${it.id}" }) { track ->
-                LibraryRow(track, isLiked = true, onIntent = onIntent)
+                LibraryRow(track, isLiked = true, onIntent = onIntent, onOpenAlbum = onOpenAlbum, onOpenArtist = onOpenArtist)
             }
         }
 
@@ -60,7 +62,7 @@ fun LibraryContent(
             item { EmptyHint("Play something to see it here") }
         } else {
             items(state.recent, key = { "recent-${it.id}" }) { track ->
-                LibraryRow(track, isLiked = state.isLiked(track.id), onIntent = onIntent)
+                LibraryRow(track, isLiked = state.isLiked(track.id), onIntent = onIntent, onOpenAlbum = onOpenAlbum, onOpenArtist = onOpenArtist)
             }
         }
     }
@@ -82,7 +84,13 @@ private fun EmptyHint(text: String) {
 }
 
 @Composable
-private fun LibraryRow(track: Track, isLiked: Boolean, onIntent: (LibraryIntent) -> Unit) {
+private fun LibraryRow(
+    track: Track,
+    isLiked: Boolean,
+    onIntent: (LibraryIntent) -> Unit,
+    onOpenAlbum: (Long) -> Unit,
+    onOpenArtist: (Long) -> Unit,
+) {
     Row(
         modifier = Modifier.fillMaxWidth()
             .clickable { onIntent(LibraryIntent.TrackClicked(track)) }
@@ -94,7 +102,8 @@ private fun LibraryRow(track: Track, isLiked: Boolean, onIntent: (LibraryIntent)
             url = track.coverUrl,
             contentDescription = track.title,
             modifier = Modifier.size(48.dp).clip(RoundedCornerShape(6.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .then(track.albumId?.let { id -> Modifier.clickable { onOpenAlbum(id) } } ?: Modifier),
         )
         Column(Modifier.weight(1f)) {
             Text(
@@ -110,6 +119,7 @@ private fun LibraryRow(track: Track, isLiked: Boolean, onIntent: (LibraryIntent)
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                modifier = track.artistId?.let { id -> Modifier.clickable { onOpenArtist(id) } } ?: Modifier,
             )
         }
         Box(

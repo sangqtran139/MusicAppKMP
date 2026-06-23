@@ -11,6 +11,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun HomeScreen(
     onTrackSelected: (Track) -> Unit,
+    onOpenAlbum: (Long) -> Unit,
+    onOpenPlaylist: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
@@ -24,5 +26,11 @@ fun HomeScreen(
         }
     }
 
-    HomeContent(state = state, onIntent = viewModel::onIntent, modifier = modifier)
+    HomeContent(
+        state = state,
+        onIntent = viewModel::onIntent,
+        onOpenAlbum = onOpenAlbum,
+        onOpenPlaylist = onOpenPlaylist,
+        modifier = modifier,
+    )
 }

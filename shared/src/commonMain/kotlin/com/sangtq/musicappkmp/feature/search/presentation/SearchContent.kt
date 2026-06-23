@@ -38,6 +38,8 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 fun SearchContent(
     state: SearchUiState,
     onIntent: (SearchIntent) -> Unit,
+    onOpenAlbum: (Long) -> Unit,
+    onOpenArtist: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
@@ -79,7 +81,12 @@ fun SearchContent(
 
                 else -> LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
                     items(state.results, key = { it.id }) { track ->
-                        TrackRow(track = track, onClick = { onIntent(SearchIntent.TrackClicked(track)) })
+                        TrackRow(
+                            track = track,
+                            onClick = { onIntent(SearchIntent.TrackClicked(track)) },
+                            onCoverClick = track.albumId?.let { id -> { onOpenAlbum(id) } },
+                            onArtistClick = track.artistId?.let { id -> { onOpenArtist(id) } },
+                        )
                     }
                     if (state.isLoadingMore) {
                         item {
@@ -95,7 +102,12 @@ fun SearchContent(
 }
 
 @Composable
-private fun TrackRow(track: Track, onClick: () -> Unit) {
+private fun TrackRow(
+    track: Track,
+    onClick: () -> Unit,
+    onCoverClick: (() -> Unit)? = null,
+    onArtistClick: (() -> Unit)? = null,
+) {
     Row(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = AppSpacing.sm),
         verticalAlignment = Alignment.CenterVertically,
@@ -105,7 +117,8 @@ private fun TrackRow(track: Track, onClick: () -> Unit) {
             url = track.coverUrl,
             contentDescription = track.title,
             modifier = Modifier.size(52.dp).clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .then(if (onCoverClick != null) Modifier.clickable(onClick = onCoverClick) else Modifier),
         )
         Column(Modifier.weight(1f)) {
             Text(
@@ -121,6 +134,7 @@ private fun TrackRow(track: Track, onClick: () -> Unit) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = if (onArtistClick != null) Modifier.clickable(onClick = onArtistClick) else Modifier,
             )
         }
     }

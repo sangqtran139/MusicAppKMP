@@ -1,5 +1,6 @@
 package com.sangtq.musicappkmp.catalog.di
 
+import com.sangtq.musicappkmp.catalog.data.local.CatalogCacheDataSource
 import com.sangtq.musicappkmp.catalog.data.remote.CatalogApi
 import com.sangtq.musicappkmp.catalog.data.repository.CatalogRepositoryImpl
 import com.sangtq.musicappkmp.catalog.domain.repository.CatalogRepository
@@ -21,7 +22,8 @@ val catalogModule = module {
     single { ApiConfig() }
     single { createHttpClient(get(), get()) }
     single { CatalogApi(get(), get()) }
-    single<CatalogRepository> { CatalogRepositoryImpl(get(), get()) }
+    single { CatalogCacheDataSource(get(), get()) }
+    single<CatalogRepository> { CatalogRepositoryImpl(get(), get(), get()) }
 
     factory { SearchCatalogUseCase(get()) }
     factory { GetTrackUseCase(get()) }

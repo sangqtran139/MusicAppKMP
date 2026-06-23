@@ -8,6 +8,7 @@ import com.sangtq.musicappkmp.feature.library.domain.usecase.ToggleLikeUseCase
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 class LibraryViewModel(
     observeLiked: ObserveLikedUseCase,
@@ -22,7 +23,7 @@ class LibraryViewModel(
     }
 
     override fun onIntent(intent: LibraryIntent) = when (intent) {
-        is LibraryIntent.ToggleLike -> toggleLike(intent.track)
+        is LibraryIntent.ToggleLike -> { viewModelScope.launch { toggleLike(intent.track) }; Unit }
         is LibraryIntent.TrackClicked -> sendEffect(LibraryEffect.OpenPlayer(intent.track))
     }
 }

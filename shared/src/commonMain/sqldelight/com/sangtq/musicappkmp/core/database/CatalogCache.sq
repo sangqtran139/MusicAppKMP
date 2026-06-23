@@ -1,0 +1,101 @@
+-- Cache catalog offline-first (xem docs/Architecture.md, docs/Roadmap.md Phase 3).
+-- isExplicit lưu INTEGER 0/1; map Boolean ở data layer. previewUrl có thể hết hạn — coi metadata
+-- là nguồn chính, lấy lại preview khi phát (docs/Api/DeezerApi.md §5).
+
+CREATE TABLE cachedAlbum (
+    id INTEGER NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    artistName TEXT NOT NULL,
+    coverUrl TEXT,
+    releaseDate TEXT,
+    trackCount INTEGER NOT NULL
+);
+
+CREATE TABLE cachedAlbumTrack (
+    albumId INTEGER NOT NULL,
+    position INTEGER NOT NULL,
+    id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    artistName TEXT NOT NULL,
+    artistId INTEGER,
+    albumTitle TEXT,
+    trackAlbumId INTEGER,
+    coverUrl TEXT,
+    previewUrl TEXT,
+    durationSeconds INTEGER NOT NULL,
+    isExplicit INTEGER NOT NULL,
+    PRIMARY KEY (albumId, id)
+);
+
+selectAlbum:
+SELECT * FROM cachedAlbum WHERE id = :id;
+
+selectAlbumTracks:
+SELECT * FROM cachedAlbumTrack WHERE albumId = :albumId ORDER BY position;
+
+upsertAlbum:
+INSERT OR REPLACE INTO cachedAlbum(id, title, artistName, coverUrl, releaseDate, trackCount)
+VALUES (:id, :title, :artistName, :coverUrl, :releaseDate, :trackCount);
+
+deleteAlbumTracks:
+DELETE FROM cachedAlbumTrack WHERE albumId = :albumId;
+
+insertAlbumTrack:
+INSERT OR REPLACE INTO cachedAlbumTrack(albumId, position, id, title, artistName, artistId, albumTitle, trackAlbumId, coverUrl, previewUrl, durationSeconds, isExplicit)
+VALUES (:albumId, :position, :id, :title, :artistName, :artistId, :albumTitle, :trackAlbumId, :coverUrl, :previewUrl, :durationSeconds, :isExplicit);
+
+CREATE TABLE cachedArtist (
+    id INTEGER NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    pictureUrl TEXT,
+    albumCount INTEGER NOT NULL,
+    fanCount INTEGER NOT NULL
+);
+
+selectArtist:
+SELECT * FROM cachedArtist WHERE id = :id;
+
+upsertArtist:
+INSERT OR REPLACE INTO cachedArtist(id, name, pictureUrl, albumCount, fanCount)
+VALUES (:id, :name, :pictureUrl, :albumCount, :fanCount);
+
+CREATE TABLE cachedPlaylist (
+    id INTEGER NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT,
+    coverUrl TEXT,
+    trackCount INTEGER NOT NULL
+);
+
+CREATE TABLE cachedPlaylistTrack (
+    playlistId INTEGER NOT NULL,
+    position INTEGER NOT NULL,
+    id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    artistName TEXT NOT NULL,
+    artistId INTEGER,
+    albumTitle TEXT,
+    trackAlbumId INTEGER,
+    coverUrl TEXT,
+    previewUrl TEXT,
+    durationSeconds INTEGER NOT NULL,
+    isExplicit INTEGER NOT NULL,
+    PRIMARY KEY (playlistId, id)
+);
+
+selectPlaylist:
+SELECT * FROM cachedPlaylist WHERE id = :id;
+
+selectPlaylistTracks:
+SELECT * FROM cachedPlaylistTrack WHERE playlistId = :playlistId ORDER BY position;
+
+upsertPlaylist:
+INSERT OR REPLACE INTO cachedPlaylist(id, title, description, coverUrl, trackCount)
+VALUES (:id, :title, :description, :coverUrl, :trackCount);
+
+deletePlaylistTracks:
+DELETE FROM cachedPlaylistTrack WHERE playlistId = :playlistId;
+
+insertPlaylistTrack:
+INSERT OR REPLACE INTO cachedPlaylistTrack(playlistId, position, id, title, artistName, artistId, albumTitle, trackAlbumId, coverUrl, previewUrl, durationSeconds, isExplicit)
+VALUES (:playlistId, :position, :id, :title, :artistName, :artistId, :albumTitle, :trackAlbumId, :coverUrl, :previewUrl, :durationSeconds, :isExplicit);
